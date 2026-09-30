@@ -4,7 +4,7 @@ library(ClimClass)
 library(tmap)
 
 #load air temp rasters
-jan_temp <- rast("C:/Users/phill/Desktop/KoppenGeigerClassifications/data/statewide/contemporary_climatology_mean_air_temperature_mean_monthly_statewide_january.tif")
+jan_temp <- rast("KoppenGeigerClassifications/data/dataset1/temperature/contemporary_climatology_mean_air_temperature_mean_monthly_statewide_january.tif")
 feb_temp <- rast("C:/Users/phill/Desktop/KoppenGeigerClassifications/data/statewide/contemporary_climatology_mean_air_temperature_mean_monthly_statewide_february.tif")
 mar_temp <- rast("C:/Users/phill/Desktop/KoppenGeigerClassifications/data/statewide/contemporary_climatology_mean_air_temperature_mean_monthly_statewide_march.tif")
 apr_temp <- rast("C:/Users/phill/Desktop/KoppenGeigerClassifications/data/statewide/contemporary_climatology_mean_air_temperature_mean_monthly_statewide_april.tif")
