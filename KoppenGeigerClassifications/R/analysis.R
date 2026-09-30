@@ -1,3 +1,4 @@
+
 month_labels <- function(month_format) {
   switch(month_format,
          lower     = tolower(month.name),     # january
