@@ -1,2 +1,2 @@
-# hawaii_climate_classification
+# HIClimClass
 Repository for Hawaii Climate Classification project for Applied Climatology
