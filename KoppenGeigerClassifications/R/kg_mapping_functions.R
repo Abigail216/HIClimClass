@@ -25,4 +25,8 @@ map_kg_zones <- function(kg){
 }
 
 # run function
-map_kg_zones(kg)
+map_of_kg_zones <- map_kg_zones(kg)
+
+# save as PNG and TIFF 
+tmap_save(tm = map_of_kg_zones, filename = "results/kg_zones_HI_map.png") # input your file path
+tmap_save(tm = map_of_kg_zones, filename = "results/kg_zones_HI_map.tiff") # input your file path
