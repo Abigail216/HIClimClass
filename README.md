@@ -1,6 +1,6 @@
 # HIClimClass: Köppen-Geiger Climate Classification of Hawaiʻi
 
-Project for **Applied Climatology**. The code classifies every grid cell in Hawaiʻi into a
+The code classifies every grid cell in Hawaiʻi into a
 **Köppen-Geiger climate zone** using mean monthly rainfall and mean monthly air temperature
 maps. It does this for two datasets, **contemporary** and **legacy** climatologies, so the
 resulting climate-zone maps can be compared.
