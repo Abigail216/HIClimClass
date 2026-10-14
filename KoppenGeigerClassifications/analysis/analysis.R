@@ -1,16 +1,26 @@
-#load prcp source and view
-prcp <- load_source("rainfall", "contemporary_climatology_rainfall_mean_monthly_statewide_%s.tif", "lower","P")
-prcp
+#--------Setup------------------------------------------------------------------
 
-#load temp source and view
-temp <- load_source("temperature", "contemporary_climatology_mean_air_temperature_mean_monthly_statewide_%s.tif", "lower","T")
-temp
+# load required packages
+library(ClimClass)
+library(terra)
+library(tmap)
 
-#format data for input to ClimClass Koppen Geiger Function
-formatted_data <- stack_prcp_temp(prcp, temp)
+#load functions
+source("KoppenGeigerClassifications/R/kg_functions.R")
 
-#apply cell by cell classification function to entire raster dataset
-kg <- terra::app(formatted_data, classify_kg_cell)
 
-#simple kg plot
-plot(kg)
+#--------Runs-------------------------------------------------------------------
+contemp_prcp_contemp_temp <- run_kg_workflow(prcp_dir = "KoppenGeigerClassifications/data/rainfall/contemporary",
+                prcp_pattern = "contemporary_climatology_rainfall_mean_monthly_statewide_%s.tif",
+                temp_dir = "KoppenGeigerClassifications/data/temperature/contemporary",
+                temp_pattern = "contemporary_climatology_mean_air_temperature_mean_monthly_statewide_%s.tif",
+                subtitle = "Contemporary Precipitation  |  Contemporary Air Temperature", 
+                file_name = "contemp_prcp_contemp_temp")
+
+
+legacy_prcp_legacy_temp <- run_kg_workflow(prcp_dir = "KoppenGeigerClassifications/data/rainfall/legacy",
+                prcp_pattern = "legacy_climatology_rainfall_mean_monthly_statewide_%s.tif",
+                temp_dir = "KoppenGeigerClassifications/data/temperature/legacy",
+                temp_pattern = "legacy_climatology_mean_air_temperature_mean_monthly_statewide_%s.tif",
+                subtitle = "Legacy Precipitation  |  Legacy Air Temperature", 
+                file_name = "legacy_prcp_legacy_temp")
