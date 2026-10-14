@@ -15,7 +15,7 @@ contemp_prcp_contemp_temp <- run_kg_workflow(prcp_dir = "KoppenGeigerClassificat
                 temp_dir = "KoppenGeigerClassifications/data/temperature/contemporary",
                 temp_pattern = "contemporary_climatology_mean_air_temperature_mean_monthly_statewide_%s.tif",
                 subtitle = "Contemporary Precipitation  |  Contemporary Air Temperature", 
-                file_name = "contemp_prcp_contemp_temp")
+                file_name = "contemp_prcp_contemp_temp01")
 
 
 legacy_prcp_legacy_temp <- run_kg_workflow(prcp_dir = "KoppenGeigerClassifications/data/rainfall/legacy",
@@ -23,4 +23,4 @@ legacy_prcp_legacy_temp <- run_kg_workflow(prcp_dir = "KoppenGeigerClassificatio
                 temp_dir = "KoppenGeigerClassifications/data/temperature/legacy",
                 temp_pattern = "legacy_climatology_mean_air_temperature_mean_monthly_statewide_%s.tif",
                 subtitle = "Legacy Precipitation  |  Legacy Air Temperature", 
-                file_name = "legacy_prcp_legacy_temp")
+                file_name = "legacy_prcp_legacy_temp01")

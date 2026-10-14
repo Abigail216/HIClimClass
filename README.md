@@ -5,7 +5,7 @@ The code classifies every grid cell in Hawaiʻi into a
 maps. It does this for two datasets, **contemporary** and **legacy** climatologies, so the
 resulting climate-zone maps can be compared.
 
-![Contemporary Köppen-Geiger map](KoppenGeigerClassifications/results/contemp_prcp_contemp_temp.png)
+![Contemporary Köppen-Geiger map](KoppenGeigerClassifications/results/contemp_prcp_contemp_temp01.png)
 
 ## What the code does
 

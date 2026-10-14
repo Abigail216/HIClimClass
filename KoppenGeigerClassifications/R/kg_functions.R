@@ -84,28 +84,25 @@ classify_kg <- function(kg_inputs) {
 
 
 #--------MAPPING----------------------------------------------------------------
-
+clim_classes_key <- data.frame(
+  class_code = c(11, 12, 13, 21, 22, 31, 32, 33, 41, 42, 43, 51, 52),
+  class_name = c("Af", "Aw", "Am", "BW", "BS", "Cs", "Cw", "Cf", "Ds", "Dw", "Df", "ET", "EF")
+)
 map_kg_zones <- function(kg, subtitle){
-  
-  clim_classes_key <- data.frame(
-    class_code = c(11, 12, 13, 21, 22, 31, 32, 33, 41, 42, 43, 51, 52),
-    class_name = c("Af", "Aw", "Am", "BW", "BS", "Cs", "Cw", "Cf", "Ds", "Dw", "Df", "ET", "EF"),
-    stringsAsFactors = FALSE
-  )
   
   levels(kg) <- clim_classes_key
   
-  kg_colors <- c("#A50F15",  # Af 
-                 "#FC8D59",  # Aw
-                 "#E34A33",  # Am
-                 "#F6E8A6",  # BW 
-                 "#D9B44A",  # BS
-                 "#B8D96B",  # Cs  
-                 "#5AAE61",  # Cw
-                 "#1B7837",  # Cf
-                 "#9ECAE1",  # Ds
-                 "#4292C6",  # Dw
-                 "#08519C",  # Df
+  kg_colors <- c("#9ECAE1",  # Af
+                 "#4292C6",  # Aw
+                 "#08519C",  # Am
+                 "#D9B44A",  # BW
+                 "#F6E8A6",  # BS
+                 "#FCC5C0",  # Cs  - temperate: pinks/plum
+                 "#F768A1",  # Cw
+                 "#AE017E",  # Cf
+                 "#C7E9C0",  # Ds  - continental: greens (not present in Hawaii)
+                 "#74C476",  # Dw
+                 "#238B45",  # Df
                  "#BDBDBD",  # ET 
                  "#636363")  # EF
   
@@ -126,10 +123,27 @@ map_kg_zones <- function(kg, subtitle){
                                     "BOTTOM"))
 }
 
+
+#--------AREA CALCULATIONS------------------------------------------------------
+calc_class_areas <- function(kg) {
+  areas <- terra::expanse(kg, unit="km", byValue=TRUE)
+  
+  key <- clim_classes_key
+  
+  out <- data.frame(
+    class_code = areas$value,
+    class_name = key$class_name[match(areas$value, key$class_code)],
+    area_km_2 = round(areas$area))
+    
+    out$percent <- round(100 * out$area_km_2 / sum(out$area_km_2), 2)
+    
+    out
+}
+
 #--------FULL WORKFLOW----------------------------------------------------------
 run_kg_workflow <- function(prcp_dir, prcp_pattern, temp_dir, temp_pattern, subtitle, file_name,
                             output_dir = "KoppenGeigerClassifications/results",
-                            save_png = TRUE, save_geotiff = TRUE) {
+                            save_png = TRUE, save_geotiff = TRUE, calculate_areas = TRUE) {
   
   #load prcp and temperature source
   prcp <- load_source(prcp_dir, prcp_pattern, "lower","P")
@@ -154,6 +168,11 @@ run_kg_workflow <- function(prcp_dir, prcp_pattern, temp_dir, temp_pattern, subt
   #save geotiff
   if (save_geotiff) {
     writeRaster(kg, file.path(output_dir, paste0(file_name, ".tif")), overwrite = TRUE)
+  }
+  
+  if (calculate_areas) {
+    areas <- calc_class_areas(kg)
+    print(areas)
   }
   
   #return raster
