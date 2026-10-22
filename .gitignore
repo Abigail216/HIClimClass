@@ -1,3 +1,7 @@
-KoppenGeigerClassifications/data/Dataset1/rainfall/
-KoppenGeigerClassifications/data/Dataset1/temperature/
+KoppenGeigerClassifications/data
+KoppenGeigerClassifications/results/*
+  !KoppenGeigerClassifications/results/*.png
 .Rproj.user
+.Rhistory
+.RData
+.Rproj.user/

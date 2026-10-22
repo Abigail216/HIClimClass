@@ -9,7 +9,7 @@ resulting climate-zone maps can be compared.
 
 ## What the code does
 
-The Köppen-Geiger system groups climates by their yearly cycle of temperature and precipitation.
+xThe Köppen-Geiger system groups climates by their yearly cycle of temperature and precipitation.
 Examples are tropical rainforest (Af), monsoon (Am), and steppe (BS). For each dataset, the
 workflow:
 
