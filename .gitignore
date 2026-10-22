@@ -1,6 +1,6 @@
 KoppenGeigerClassifications/data
 KoppenGeigerClassifications/results/*
-  !KoppenGeigerClassifications/results/*.png
+!KoppenGeigerClassifications/results/*.png
 .Rproj.user
 .Rhistory
 .RData
