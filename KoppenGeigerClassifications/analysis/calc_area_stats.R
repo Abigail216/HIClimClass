@@ -1,14 +1,23 @@
-# load required packages
+# load required packages ==============================================================
 library(terra)
-library(tmap)
 library(macroBiome)
 library(sf)
 library(exactextractr)
+library(tidyverse)
+library(openxlsx) 
 
 source("scripts/macroBiome.R")
 
-#contemporary climatologies
+# SETUP ===========================================================================
+# read in shps
+islands <- st_read("HI_KGC layers/hawaii_coastline_shp/coast_hawaii.shp")
+climate_divisions <- st_read("HI_KGC layers/HI_ClimateDivisions/ClimDiv12_polygon_clip.shp")
 
+# transform crs 
+st_transform(islands, "EPSG:4269")
+st_transform(climate_divisions, "EPSG:4269")
+
+# read in contemporary climatologies
 contemp_temp <- load_source("contemporary_climatology/air_temperature/mean/mean_monthly/statewide",
                             "contemporary_climatology_mean_air_temperature_mean_monthly_statewide_%s.tif", 
                             "lower", "T")
@@ -16,10 +25,10 @@ contemp_prcp <- load_source("contemporary_climatology/rain/statewide",
                             "contemporary_climatology_rainfall_mean_monthly_statewide_%s.tif", 
                             "lower", "P")
 kg <- run_kgc(contemp_temp, contemp_prcp, "results/contemporary_kgc", "Contemporary Climatologies" )
+project(kg, "EPSG:4269", method = "near")
 
-
-# calculate statistics 
-# climate class areas 
+# CALCULATE STATS =================================================================
+# calculate area of each kg class (entire state)
 calc_class_areas <- function(kg) { 
   areas <- terra::expanse(kg, unit="km", byValue=TRUE)
   
@@ -27,7 +36,6 @@ calc_class_areas <- function(kg) {
   
   out <- data.frame(
     class_code = areas$value,
-    class_name = key$class_name[match(areas$value, key$class_code)],
     area_km_2 = round(areas$area))
   
   out$percent <- round(100 * out$area_km_2 / sum(out$area_km_2), 2)
@@ -36,25 +44,56 @@ calc_class_areas <- function(kg) {
 }
 kg_class_areas <- calc_class_areas(kg)
 
-# calculate areas each island 
-st_transform(each_island, "EPSG:4269")
-project(kg, "EPSG:4269", method = "near")
+# calculate area of each kg class by island 
+calc_class_areas_by_poly <- function(shp, ID_column, ID_of_interest, raster){
+  poly <- shp %>% 
+    dplyr::filter(!!rlang::sym(ID_column) == ID_of_interest)  
+  mask <- terra::mask(raster, poly)
+  areas <- calc_class_areas(mask)
+  out <- areas %>%
+    select(class_code, area_km_2, percent)
+  
+  out 
+  }
 
-specific_polygon <- each_island[each_island$COAST_GEO_ == "2", ]
-clipped  <- mask(kg, specific_polygon)
-island_2_kg_areas <- calc_class_areas(clipped)
+kauai <- calc_class_areas_by_poly(shp = islands, 
+                                     ID_column = "Name", 
+                                     ID_of_interest = "Kauai", 
+                                     raster = kg)
+oahu <- calc_class_areas_by_poly(shp = islands, 
+                                 ID_column = "Name", 
+                                 ID_of_interest = "O'ahu", 
+                                 raster = kg)
+molokai <- calc_class_areas_by_poly(shp = islands, 
+                                 ID_column = "Name", 
+                                 ID_of_interest = "Moloka'i", 
+                                 raster = kg)
+maui <- calc_class_areas_by_poly(shp = islands, 
+                                 ID_column = "Name", 
+                                 ID_of_interest = "Maui", 
+                                 raster = kg)
+lanai <- calc_class_areas_by_poly(shp = islands, 
+                                 ID_column = "Name", 
+                                 ID_of_interest = "Lana'i", 
+                                 raster = kg)
+hawaii <- calc_class_areas_by_poly(shp = islands, 
+                                 ID_column = "Name", 
+                                 ID_of_interest = "Hawai'i", 
+                                 raster = kg)
+island_stats <- list(
+  "Kaua'i" = kauai, 
+  "O'ahu" = oahu, 
+  "Moloka'i" = molokai, 
+  "Maui" = maui, 
+  "Lana'i" = lanai, 
+  "Hawai'i" = hawaii
+)
 
-# calc areas each clim div 
-climate_divisions <- st_read("HI_KGC layers/HI_ClimateDivisions/ClimDiv12_polygon_clip.shp")
-st_crs(climate_divisions)
-st_transform(climate_divisions, "EPSG:4269")
+# calculate area of each kg class by climate division 
+climdiv_list <- 1:12
+climdiv_stats <- lapply(climdiv_list, calc_class_areas_by_poly, shp = climate_divisions, ID_column = "gridcode", raster = kg)
 
-specific_polygon <- climate_divisions[climate_divisions$gridcode == "1", ]
-clipped  <- mask(kg, specific_polygon)
-climdiv_1_kg_areas <- calc_class_areas(clipped)
-
-# to change about this script: 
-# turn it into a function so that can run for each polygon
-# add elevation stats (have to reclassify dem raster)
-# perform these calcs for legacy and future maps
-
+    
+# EXPORT ============================================================================= 
+openxlsx::write.xlsx(island_stats, file = "results/kg_island_stats.xlsx", overwrite = TRUE)
+openxlsx::write.xlsx(climdiv_stats, file = "results/kg_climate_division_stats.xlsx", overwrite = TRUE)
