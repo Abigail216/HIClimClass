@@ -111,4 +111,5 @@ run_kgc <-
   if(xmin(prcp) > 180) prcp <- shift(prcp, dx = -360)
   result <- classify_kgc(temp, prcp, file_name)
   map_kgc(result, file_name, map_subtitle)
+  result
 }
