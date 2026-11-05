@@ -1,9 +1,11 @@
-# load required packages
+#-------------------SETUP-------------------------------------------------------
 library(terra)
 library(tmap)
 library(macroBiome)
 
-source("KoppenGeigerClassifications/R/macroBiome.R")
+source("KoppenGeigerClassifications/R/functions_classify.R")
+
+#------------------3-LETTER CLASSES--------------------------------------------
 
 #legacy climatologies 
 legacy_temp <- load_source("KoppenGeigerClassifications/data/temperature/legacy",
@@ -12,7 +14,7 @@ legacy_temp <- load_source("KoppenGeigerClassifications/data/temperature/legacy"
 legacy_prcp <- load_source("KoppenGeigerClassifications/data/rainfall/legacy",
                             "legacy_climatology_rainfall_mean_monthly_statewide_%s.tif", 
                             "lower", "P")
-legacy_kgc <- run_kgc(legacy_temp, legacy_prcp, "KoppenGeigerClassifications/results/legacy_kgc", "Legacy Climatologies" )
+legacy_kgc <- run_kgc(legacy_temp, legacy_prcp, "KoppenGeigerClassifications/results/classifications/all/legacy_kgc", "Legacy Climatologies" )
 
 #contemporary climatologies
 
@@ -22,55 +24,54 @@ contemp_temp <- load_source("KoppenGeigerClassifications/data/temperature/contem
 contemp_prcp <- load_source("KoppenGeigerClassifications/data/rainfall/contemporary",
                             "contemporary_climatology_rainfall_mean_monthly_statewide_%s.tif", 
                             "lower", "P")
-contemp_kgc <- run_kgc(contemp_temp, contemp_prcp, "KoppenGeigerClassifications/results/contemporary_kgc", "Contemporary Climatologies" )
+contemp_kgc <- run_kgc(contemp_temp, contemp_prcp, "KoppenGeigerClassifications/results/classifications/all/contemporary_kgc", "Contemporary Climatologies" )
 
 #ssp126 mid
 ssp126_mid_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/mid/MME_MID_ssp126_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/mid/MME_MID_ssp126_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp126_mid_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp126_mid_kgc", 
         "SSP1-2.6 Mid-Century")
 
 
 #ssp245 mid
 ssp245_mid_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/mid/MME_MID_ssp245_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/mid/MME_MID_ssp245_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp245_mid_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp245_mid_kgc", 
         "SSP2-4.5 Mid-Century")
 
 #ssp 370 mid
 ssp370_mid_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/mid/MME_MID_ssp370_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/mid/MME_MID_ssp370_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp370_mid_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp370_mid_kgc", 
         "SSP3-7.0 Mid-Century")
 
 
 #ssp 585 mid
 ssp585_mid_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/mid/MME_MID_ssp585_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/mid/MME_MID_ssp585_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp585_mid_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp585_mid_kgc", 
         "SSP5-8.5 Mid-Century")
 
 #ssp126 end
 ssp126_end_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/end/MME_END_ssp126_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/end/MME_END_ssp126_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp126_end_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp126_end_kgc", 
         "SSP1-2.6 End-of-Century")
 
 #ssp 245
 ssp245_end_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/end/MME_END_ssp245_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/end/MME_END_ssp245_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp245_end_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp245_end_kgc", 
         "SSP 2-4.5 End-of-Century")
 
 #ssp 370
-ssprun_kgc("KoppenGeigerClassifications/data/temperature/future/end/MME_END_ssp370_MONTHLY_tas_mean.tif", 
+ssp370_end_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/end/MME_END_ssp370_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/end/MME_END_ssp370_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp370_end_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp370_end_kgc", 
         "SSP 3-7.0 End-of-Century")
 
 #ssp 585
-run_kgc("KoppenGeigerClassifications/data/temperature/future/end/MME_END_ssp585_MONTHLY_tas_mean.tif", 
+ssp585_end_kgc <- run_kgc("KoppenGeigerClassifications/data/temperature/future/end/MME_END_ssp585_MONTHLY_tas_mean.tif", 
         "KoppenGeigerClassifications/data/rainfall/future/end/MME_END_ssp585_MONTHLY_pr_mean.tif", 
-        "KoppenGeigerClassifications/results/ssp585_end_kgc", 
+        "KoppenGeigerClassifications/results/classifications/all/ssp585_end_kgc", 
         "SSP 5-8.5 End-of-Century")
-
