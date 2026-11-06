@@ -1,11 +1,12 @@
-# # load required packages 
-# library(terra)
-# library(macroBiome)
-# library(sf)
-# library(exactextractr)
+# info ==============================================================================
+# this script assembles table 1 of our paper. 
+# relies on reading in files generated in the calc_area_stats_contemporary R script
+# ====================================================================================
+
+# load required packages 
+
 library(tidyverse)
 library(readxl)
-# library(openxlsx) 
 
 # read in files 
 statewide <- read_excel("results/kg_stats_contemporary.xlsx")
@@ -32,10 +33,10 @@ maui <- format_stats(polygon = maui, column = "Maui")
 lanai <- format_stats(polygon = lanai, column = "Lana'i")
 hawaii <- format_stats(polygon = hawaii, column = "Hawai'i")
 
-# export
+# create table 
 all_columns <- list(statewide, kauai, oahu, molokai, maui, lanai, hawaii)
-
 t1 <- all_columns %>% 
   reduce(left_join, by = "class_code")
 
+# export 
 write.csv(t1, "results/t1_PARTIAL.csv", row.names = FALSE)
