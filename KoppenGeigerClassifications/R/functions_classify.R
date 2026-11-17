@@ -5,6 +5,70 @@ library(macroBiome)
 
 source("KoppenGeigerClassifications/R/00_keys.R")
 
+#--------MAP STYLE--------------------------------------------------------------
+# One place to control how all maps look (used by map_kgc and map_major).
+# Change a value here and every map updates the same way.
+
+map_style <- list(
+  font_family       = "sans",       # "sans", "serif" or "mono"
+  title_size        = 1.4,
+  title_face        = "bold",
+  subtitle_size     = 1.0,
+  subtitle_face     = "italic",
+  subtitle_color    = "grey30",
+  legend_title_size = 0.9,
+  legend_text_size  = 0.75,
+  axis_label_size   = 0.65,         # lat/long labels on the graticule
+  grid_color        = "grey60",
+  grid_alpha        = 0.35,
+  width_in          = 10,           # saved PNG size (inches)
+  height_in         = 7,
+  dpi               = 300
+)
+
+# Shared layout added to every map: title + subtitle, legend, light graticule,
+# north arrow, scale bar, no outer frame.
+#
+# Inputs:
+#   title        - main title
+#   subtitle     - subtitle (scenario name)
+#   legend_title - legend heading
+
+map_layout <- function(title, subtitle, legend_title) {
+  tm_graticules(n.x = 5, n.y = 5,
+                col = map_style$grid_color, alpha = map_style$grid_alpha,
+                labels.size = map_style$axis_label_size) +
+    tm_title(title,
+             size = map_style$title_size, fontface = map_style$title_face,
+             position = tm_pos_out("center", "top")) +
+    tm_title(subtitle,
+             size = map_style$subtitle_size, fontface = map_style$subtitle_face,
+             color = map_style$subtitle_color,
+             position = tm_pos_out("center", "top")) +
+    tm_compass(type = "arrow", size = 2,
+               position = tm_pos_in("left", "bottom")) +
+    tm_scalebar(breaks = c(0, 50, 100), text.size = 0.6,
+                position = tm_pos_in("left", "bottom")) +
+    tm_layout(text.fontfamily = map_style$font_family, frame = FALSE)
+}
+
+# Shared legend settings
+map_legend <- function(legend_title) {
+  tm_legend(title = legend_title,
+            title.size = map_style$legend_title_size,
+            title.fontface = "bold",
+            text.size = map_style$legend_text_size,
+            position = tm_pos_out("right", "center"),
+            frame = FALSE)
+}
+
+# Saves a map as PNG at a fixed size so all figures match
+save_map <- function(map, file_name) {
+  tmap_save(map, paste0(file_name, ".png"),
+            width = map_style$width_in, height = map_style$height_in,
+            units = "in", dpi = map_style$dpi)
+}
+
 #--------DATA LOADING-----------------------------------------------------------
 # Creates month labels in chosen format
 #
@@ -70,13 +134,13 @@ map_kgc <- function (result, file_name, map_subtitle){
                 levels = all_key$class_name,
                 levels.drop = TRUE
               ), 
-              col.legend = tm_legend(title = "Legend"))+
-            tm_title("Koeppen-Geiger Climate Classifications of Hawaii", 
+              col.legend = tm_legend(title = "Climate class"))+
+            tm_title("Köppen-Geiger Climate Classification of Hawaii", 
                      size = 1.5, position = tm_pos_out("center", "top")) +
             tm_title(map_subtitle, 
                      size = 0.8, position = tm_pos_out("center", "top")) +
-            tm_compass(position = tm_pos_in("LEFT", 
-                                            "BOTTOM"))
+            tm_compass(position = tm_pos_in("RIGHT", 
+                                            "TOP"))
   tmap_save(map, paste0(file_name, ".png"))
   print(map)
 }
@@ -131,13 +195,13 @@ map_major <- function(x, file_name, map_subtitle) {
         levels = major_key$class_name,
         levels.drop = TRUE
       ), 
-      col.legend = tm_legend(title = "Legend"))+
-    tm_title("Major Koeppen-Geiger Climate Classes of Hawaii", 
+      col.legend = tm_legend(title = "Major Class"))+
+    tm_title("Major Köppen-Geiger Climate Classes of Hawaii", 
              size = 1.5, position = tm_pos_out("center", "top")) +
     tm_title(map_subtitle, 
              size = 0.8, position = tm_pos_out("center", "top")) +
-    tm_compass(position = tm_pos_in("LEFT", 
-                                    "BOTTOM"))
+    tm_compass(position = tm_pos_in("RIGHT", 
+                                    "TOP"))
   tmap_save(map, paste0(file_name, ".png"))
   print(map)
 }
