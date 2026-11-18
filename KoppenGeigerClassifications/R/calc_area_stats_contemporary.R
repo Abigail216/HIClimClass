@@ -27,8 +27,8 @@ contemp_prcp <- load_source("contemporary_climatology/rain/statewide",
 contemporary_kgc <- run_kgc(contemp_temp, contemp_prcp, "results/contemporary_kgc", "Contemporary Climatologies" )
 st_crs(contemporary_kgc)
 
-# CALCULATE STATS =================================================================
-# calculate area of each kg class (entire state)
+# CREATE FUNCTIONS ================================================================
+# calculate class areas within raster
 calc_class_areas <- function(kg) { 
   areas <- terra::expanse(kg, unit="km", byValue=TRUE)
   
@@ -42,9 +42,8 @@ calc_class_areas <- function(kg) {
   
   out
 }
-kg_class_areas <- calc_class_areas(contemporary_kgc)
 
-# calculate area of each kg class by island 
+# calculate areas of raster within polygon 
 calc_class_areas_by_poly <- function(shp, ID_column, ID_of_interest, raster){
   poly <- shp %>% 
     dplyr::filter(!!rlang::sym(ID_column) == ID_of_interest)  
@@ -54,7 +53,13 @@ calc_class_areas_by_poly <- function(shp, ID_column, ID_of_interest, raster){
     select(class_code, area_km_2, percent)
   
   out 
-  }
+}
+
+# CALCULATE STATS =================================================================
+# calculate area of each kg class (entire state)
+kg_class_areas <- calc_class_areas(contemporary_kgc)
+
+# calculate area of each kg class by island
 
 kauai <- calc_class_areas_by_poly(shp = islands, 
                                      ID_column = "Name", 
