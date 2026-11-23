@@ -1,8 +1,12 @@
 KoppenGeigerClassifications/data
 KoppenGeigerClassifications/results/*
+Holdridge/data
+Holdridge/results/*
+Intersection/results/
 !KoppenGeigerClassifications/results/*.png
 Intersection/data
 .Rproj.user
 .Rhistory
 .RData
 .Rproj.user/
+
