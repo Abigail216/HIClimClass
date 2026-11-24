@@ -1,0 +1,45 @@
+# info ==============================================================================
+# this script assembles table 1 of our paper. 
+# relies on reading in files generated in the calc_area_stats_contemporary R script
+# ====================================================================================
+
+# load required packages 
+
+library(tidyverse)
+library(readxl)
+library(officer)
+
+# read in files 
+statewide <- read_excel("results/kg_stats_contemporary.xlsx")
+kauai <- read_excel("results/kg_island_stats_contemporary.xlsx", sheet = 1)
+oahu <- read_excel("results/kg_island_stats_contemporary.xlsx", sheet = 2)
+molokai <- read_excel("results/kg_island_stats_contemporary.xlsx", sheet = 3)
+maui <- read_excel("results/kg_island_stats_contemporary.xlsx", sheet = 4)
+lanai <- read_excel("results/kg_island_stats_contemporary.xlsx", sheet = 5)
+hawaii <- read_excel("results/kg_island_stats_contemporary.xlsx", sheet = 6)
+
+# writing function 
+format_stats <- function(polygon, column) {
+  polygon %>% 
+    mutate({{ column }} := paste0(area_km_2, " (", percent, ")")) %>% 
+    select(class_code, {{ column }})
+}
+
+# flow 
+statewide <- format_stats(polygon = statewide, column = "Statewide")
+kauai <- format_stats(polygon = kauai, column = "Kaua'i")
+oahu <- format_stats(polygon = oahu, column = "O'ahu")
+molokai <- format_stats(polygon = molokai, column = "Moloka'i")
+maui <- format_stats(polygon = maui, column = "Maui")
+lanai <- format_stats(polygon = lanai, column = "Lana'i")
+hawaii <- format_stats(polygon = hawaii, column = "Hawai'i")
+
+# create table 
+all_columns <- list(statewide, kauai, oahu, molokai, maui, lanai, hawaii)
+t1 <- all_columns %>% 
+  reduce(left_join, by = "class_code") %>%
+  rename("Koppen-Geiger Climate Class" = "class_code")
+
+# export as a table in word doc with officer package
+t1_doc <- body_add_table(read_docx(), value = (t1), style = "table_template")
+print(t1_doc, target = "results/Table_1.docx")
